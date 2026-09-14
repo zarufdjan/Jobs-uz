@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uzbek Jobs</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f5f7;color:#111}
+.wrap{max-width:760px;margin:auto;padding:16px}.hero,.card{background:#fff;border-radius:18px;padding:16px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+.hero{margin-bottom:14px}h1{margin:0 0 5px;font-size:28px}.sub{color:#6b7280;font-size:14px}
+.filters{display:grid;gap:10px;margin-top:15px}input,select,button{width:100%;min-height:46px;border-radius:12px;border:1px solid #d8dde3;padding:10px 12px;font-size:16px;background:#fff}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.primary{background:#111827;color:#fff;font-weight:700;border:0}
+.count{color:#6b7280;font-size:14px;margin:14px 2px 10px}.card{margin-bottom:12px}.title{font-size:20px;font-weight:700}.company{color:#4b5563;margin:4px 0 10px}
+.meta{display:flex;flex-wrap:wrap;gap:7px}.pill{background:#f0f2f5;border-radius:999px;padding:6px 9px;font-size:13px}
+.salary{font-size:18px;font-weight:700;margin:11px 0}.desc{color:#4b5563;font-size:14px;line-height:1.45;margin-bottom:12px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.empty{text-align:center;color:#6b7280}
+@media(max-width:560px){.row,.actions{grid-template-columns:1fr}}
+</style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<div class="wrap">
+<section class="hero">
+<h1>🇺🇿 Uzbek Jobs</h1>
+<div class="sub">Поиск вакансий по Узбекистану</div>
+<div class="filters">
+<input id="q" placeholder="Должность, например: шеф-повар">
+<div class="row">
+<select id="city"><option value="">Все города</option><option>Ташкент</option><option>Самарканд</option><option>Бухара</option><option>Андижан</option><option>Фергана</option><option>Наманган</option></select>
+<select id="salary"><option value="0">Любая зарплата</option><option value="1000">$1 000+</option><option value="1500">$1 500+</option><option value="2000">$2 000+</option><option value="2500">$2 500+</option></select>
+</div>
+<div class="row">
+<select id="housing"><option value="">Жильё: любое</option><option value="yes">Жильё есть</option><option value="no">Без жилья</option></select>
+<button class="primary" id="searchBtn">🔎 Найти вакансии</button>
+</div>
+</div>
+</section>
+<div class="count" id="count"></div>
+<div id="list"></div>
+</div>
+<script>
+const jobs=[
+{id:1,title:"Шеф-повар",company:"Ресторанный комплекс",city:"Ташкент",min:2000,max:2500,housing:true,desc:"Управление кухней, командой, себестоимостью и меню."},
+{id:2,title:"Су-шеф",company:"Премиальный ресторан",city:"Самарканд",min:1500,max:2000,housing:true,desc:"Организация смен, контроль качества и обучение команды."},
+{id:3,title:"Шеф-повар",company:"Отель 5★",city:"Ташкент",min:2500,max:3000,housing:false,desc:"Опыт в гостиничном бизнесе приветствуется."},
+{id:4,title:"Повар горячего цеха",company:"Ресторан",city:"Бухара",min:800,max:1200,housing:false,desc:"Работа по технологическим картам и стандартам кухни."}
+];
+
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function money(n){return "$"+Number(n).toLocaleString("en-US")}
+function render(list){
+document.getElementById("count").textContent="Найдено вакансий: "+list.length;
+document.getElementById("list").innerHTML=list.length?list.map(j=>`
+<article class="card">
+<div class="title">${esc(j.title)}</div><div class="company">${esc(j.company)}</div>
+<div class="meta"><span class="pill">📍 ${esc(j.city)}</span><span class="pill">${j.housing?"🏠 Жильё":"🏠 Без жилья"}</span></div>
+<div class="salary">${money(j.min)}–${money(j.max)}</div>
+<div class="desc">${esc(j.desc)}</div>
+<div class="actions"><button onclick="shareJob(${j.id})">📤 Поделиться</button><button class="primary" onclick="applyJob(${j.id})">📩 Откликнуться</button></div>
+</article>`).join(""):'<div class="card empty">😔 Подходящих вакансий пока нет.</div>';
+}
+function filtered(){
+const q=document.getElementById("q").value.toLowerCase().trim(),city=document.getElementById("city").value,salary=Number(document.getElementById("salary").value),housing=document.getElementById("housing").value;
+return jobs.filter(j=>{
+const text=(j.title+" "+j.company+" "+j.desc).toLowerCase();
+return(!q||text.includes(q))&&(!city||j.city===city)&&(!salary||j.max>=salary)&&(!housing||(housing==="yes"?j.housing:!j.housing));
+});
+}
+function search(){render(filtered())}
+function applyJob(id){const j=jobs.find(x=>x.id===id);const url="https://t.me/";try{Telegram.WebApp.openTelegramLink(url)}catch(e){window.open(url,"_blank")}}
+function shareJob(id){const j=jobs.find(x=>x.id===id);const text=`Вакансия: ${j.title} — ${j.company}, ${j.city}, ${money(j.min)}–${money(j.max)}`;const url="https://t.me/share/url?url=&text="+encodeURIComponent(text);try{Telegram.WebApp.openTelegramLink(url)}catch(e){window.open(url,"_blank")}}
+document.getElementById("searchBtn").onclick=search;document.getElementById("q").oninput=search;document.getElementById("city").onchange=search;document.getElementById("salary").onchange=search;document.getElementById("housing").onchange=search;
+try{Telegram.WebApp.ready();Telegram.WebApp.expand()}catch(e){} render(jobs);
+</script>
+</body>
+</html>
