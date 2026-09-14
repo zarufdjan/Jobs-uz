@@ -33,6 +33,37 @@ button{border:0;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:
 </style>
 </head>
 <body>
+
+<div id="onboarding" class="onboarding hidden">
+  <div class="onboarding-card">
+    <div class="onboarding-logo">🇺🇿</div>
+    <h2>Добро пожаловать в Jobs Uz</h2>
+    <p>Выберите, как хотите использовать приложение.</p>
+    <div class="role-grid">
+      <button class="role-btn" onclick="chooseRole('worker')">
+        <span>👨‍🍳</span>
+        <b>Я ищу работу</b>
+        <small>Вакансии, отклики и профиль</small>
+      </button>
+      <button class="role-btn" onclick="chooseRole('employer')">
+        <span>🏢</span>
+        <b>Я ищу сотрудника</b>
+        <small>Создание вакансий и кандидаты</small>
+      </button>
+    </div>
+  </div>
+</div>
+<style>
+.onboarding{position:fixed;inset:0;background:rgba(17,24,39,.72);z-index:100;display:grid;place-items:center;padding:18px}
+.onboarding.hidden{display:none}
+.onboarding-card{width:min(520px,100%);background:#fff;border-radius:24px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
+.onboarding-logo{font-size:34px}.onboarding-card h2{margin:8px 0;font-size:26px}.onboarding-card p{margin:0 0 18px;color:#6b7280}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.role-btn{background:#f8fafc;border:1px solid #e5e7eb;border-radius:18px;padding:18px;text-align:left;color:#111827}
+.role-btn span{font-size:28px}.role-btn b{display:block;font-size:16px;margin-top:10px}.role-btn small{display:block;color:#6b7280;margin-top:5px;line-height:1.35}
+.role-btn:hover{background:#eef2f7}
+@media(max-width:560px){.role-grid{grid-template-columns:1fr}}
+</style>
+
 <div class="app">
   <div class="top">
     <div><div class="brand">🇺🇿 Jobs Uz</div><div class="hello" id="hello">Найди работу или сотрудника</div></div>
@@ -115,6 +146,7 @@ button{border:0;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:
 
   <section id="profile" class="view">
     <div class="section-title">👤 Мой профиль</div>
+    <div class="card"><div class="small">Роль в Jobs Uz</div><div style="font-weight:800;margin-top:4px" id="roleLabel">Не выбрана</div><button class="secondary" style="margin-top:10px" onclick="showOnboarding()">Изменить роль</button></div>
     <div class="card">
       <div class="profile-head"><div class="avatar" id="avatar">JU</div><div><div style="font-size:19px;font-weight:800" id="profileName">Новый пользователь</div><div class="small">Соискатель • Узбекистан</div></div></div>
       <div class="form" style="margin-top:14px">
@@ -248,10 +280,20 @@ function useLocation(){
 }
 function saveProfile(){
  const name=document.getElementById("nameInput").value.trim()||"Новый пользователь";
+ const profile={
+  name,
+  phone:document.getElementById("phoneInput").value.trim(),
+  profession:document.getElementById("professionInput").value,
+  experience:document.getElementById("experienceInput").value.trim(),
+  desired:document.getElementById("desiredInput").value.trim(),
+  about:document.getElementById("aboutInput").value.trim(),
+  role:localStorage.getItem("jobs_role")||"worker"
+ };
  document.getElementById("profileName").textContent=name;
  document.getElementById("avatar").textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
  document.getElementById("hello").textContent=`Привет, ${name.split(/\s+/)[0]}!`;
- localStorage.setItem("jobs_profile",name); alert("✅ Профиль сохранён");
+ localStorage.setItem("jobs_profile",JSON.stringify(profile));
+ alert("✅ Профиль сохранён");
 }
 function publishVacancy(){
  const company=document.getElementById("eCompany").value.trim();
@@ -259,8 +301,50 @@ function publishVacancy(){
  if(!company||!position){alert("Укажите компанию и должность");return}
  alert("✅ В демо-версии вакансия сохранена. Подключим реальную базу на следующем этапе.");
 }
+function showOnboarding(){
+ document.getElementById("onboarding").classList.remove("hidden");
+}
+function chooseRole(role){
+ localStorage.setItem("jobs_role",role);
+ document.getElementById("onboarding").classList.add("hidden");
+ const label=role==="employer"?"🏢 Работодатель":"👨‍🍳 Соискатель";
+ document.getElementById("roleLabel").textContent=label;
+ if(role==="employer"){
+  document.getElementById("hello").textContent="Создайте вакансию и найдите сотрудника";
+  openView("employer");
+ }else{
+  document.getElementById("hello").textContent="Найдите работу рядом с собой";
+  openView("home");
+ }
+}
 function loadProfile(){
- const name=localStorage.getItem("jobs_profile"); if(name){document.getElementById("profileName").textContent=name;document.getElementById("nameInput").value=name;document.getElementById("avatar").textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();document.getElementById("hello").textContent=`Привет, ${name.split(/\s+/)[0]}!`}
+ const saved=localStorage.getItem("jobs_profile");
+ const role=localStorage.getItem("jobs_role");
+ if(saved){
+  const p=JSON.parse(saved);
+  const name=p.name||"Новый пользователь";
+  document.getElementById("profileName").textContent=name;
+  document.getElementById("nameInput").value=p.name||"";
+  document.getElementById("phoneInput").value=p.phone||"";
+  document.getElementById("professionInput").value=p.profession||"Шеф-повар";
+  document.getElementById("experienceInput").value=p.experience||"";
+  document.getElementById("desiredInput").value=p.desired||"";
+  document.getElementById("aboutInput").value=p.about||"";
+  document.getElementById("avatar").textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
+  document.getElementById("hello").textContent=`Привет, ${name.split(/\s+/)[0]}!`;
+ }
+ if(role){
+  document.getElementById("roleLabel").textContent=role==="employer"?"🏢 Работодатель":"👨‍🍳 Соискатель";
+ }else{
+  showOnboarding();
+ }
+ try{
+  const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user;
+  if(tgUser && !saved && !document.getElementById("nameInput").value){
+    const n=[tgUser.first_name,tgUser.last_name].filter(Boolean).join(" ");
+    if(n) document.getElementById("nameInput").value=n;
+  }
+ }catch(e){}
 }
 try{if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}}catch(e){}
 loadProfile();renderJobs();renderApplications();renderFavorites();renderNear();
