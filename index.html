@@ -2,75 +2,268 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Uzbek Jobs</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f5f7;color:#111}
-.wrap{max-width:760px;margin:auto;padding:16px}.hero,.card{background:#fff;border-radius:18px;padding:16px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-.hero{margin-bottom:14px}h1{margin:0 0 5px;font-size:28px}.sub{color:#6b7280;font-size:14px}
-.filters{display:grid;gap:10px;margin-top:15px}input,select,button{width:100%;min-height:46px;border-radius:12px;border:1px solid #d8dde3;padding:10px 12px;font-size:16px;background:#fff}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.primary{background:#111827;color:#fff;font-weight:700;border:0}
-.count{color:#6b7280;font-size:14px;margin:14px 2px 10px}.card{margin-bottom:12px}.title{font-size:20px;font-weight:700}.company{color:#4b5563;margin:4px 0 10px}
-.meta{display:flex;flex-wrap:wrap;gap:7px}.pill{background:#f0f2f5;border-radius:999px;padding:6px 9px;font-size:13px}
-.salary{font-size:18px;font-weight:700;margin:11px 0}.desc{color:#4b5563;font-size:14px;line-height:1.45;margin-bottom:12px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.empty{text-align:center;color:#6b7280}
-@media(max-width:560px){.row,.actions{grid-template-columns:1fr}}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Jobs Uz</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#111827;--soft:#eef2f7;--good:#0f9d58;--danger:#dc2626}
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+body{min-height:100vh}.app{max-width:820px;margin:0 auto;padding:14px 14px 90px}
+.top{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 14px}.brand{font-size:22px;font-weight:800}.hello{font-size:13px;color:var(--muted)}
+.view{display:none}.view.active{display:block}.hero{background:linear-gradient(135deg,#111827,#1f2937);color:#fff;padding:20px;border-radius:22px;margin-bottom:14px}
+.hero h1{margin:0 0 6px;font-size:30px}.hero p{margin:0;color:#d1d5db}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;text-align:left;min-height:94px;cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,.04)}
+.tile b{display:block;font-size:16px;margin-top:8px}.tile span{font-size:13px;color:var(--muted)}
+.section-title{font-size:18px;font-weight:800;margin:20px 2px 10px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:10px;box-shadow:0 5px 15px rgba(0,0,0,.04)}
+input,select,textarea{width:100%;background:#fff;border:1px solid #d7dde4;border-radius:12px;padding:12px;font-size:16px;outline:none}
+textarea{min-height:90px;resize:vertical}.form{display:grid;gap:10px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{border:0;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:700;cursor:pointer}.primary{background:var(--accent);color:#fff}.secondary{background:var(--soft);color:var(--text)}.danger{background:#fee2e2;color:#991b1b}
+.job-title{font-size:20px;font-weight:800}.company{color:#4b5563;margin-top:3px}.salary{font-size:18px;font-weight:800;margin:10px 0}.meta{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.pill{background:var(--soft);border-radius:999px;padding:6px 9px;font-size:12px}.desc{color:#4b5563;font-size:14px;line-height:1.45}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.toolbar{display:grid;gap:10px;margin-bottom:12px}.empty{text-align:center;padding:28px;color:var(--muted)}
+.profile-head{display:flex;gap:12px;align-items:center}.avatar{width:58px;height:58px;border-radius:50%;background:#e5e7eb;display:grid;place-items:center;font-weight:800;font-size:20px}.list{display:grid;gap:8px}.list-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px;display:flex;justify-content:space-between;align-items:center}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px max(8px,calc((100vw - 820px)/2 + 8px));z-index:20}
+.nav{max-width:820px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.nav button{background:transparent;color:#6b7280;padding:8px 3px;font-size:11px}.nav button.active{color:#111827;font-weight:800}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpi .card{text-align:center;margin:0}.kpi b{display:block;font-size:20px}.small{font-size:12px;color:var(--muted)}
+.badge{display:inline-block;border-radius:999px;background:#dcfce7;color:#166534;padding:5px 8px;font-size:12px;font-weight:700}
+.map{height:300px;border-radius:18px;background:linear-gradient(120deg,#dde7d7,#c7d8c0);position:relative;overflow:hidden;border:1px solid var(--line)}
+.road{position:absolute;background:#fff;border:1px solid #cbd5c0;height:24px;transform:rotate(-18deg);left:-20%;right:-20%;top:45%}.road.two{top:65%;transform:rotate(22deg)}.pin{position:absolute;width:18px;height:18px;border-radius:50% 50% 50% 0;background:#111;transform:rotate(-45deg)}.pin:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;left:5px;top:5px}
+.chat{height:420px;background:#eef3f8;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px}.bubble{max-width:78%;padding:10px 12px;border-radius:16px;font-size:14px}.in{background:#fff;align-self:flex-start}.out{background:#dbeafe;align-self:flex-end}
+.notice{padding:11px 12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;font-size:13px}
+@media(max-width:560px){.grid,.row,.actions{grid-template-columns:1fr}.hero h1{font-size:26px}.kpi{grid-template-columns:1fr 1fr 1fr}}
+</style>
 </head>
 <body>
-<div class="wrap">
-<section class="hero">
-<h1>🇺🇿 Uzbek Jobs</h1>
-<div class="sub">Поиск вакансий по Узбекистану</div>
-<div class="filters">
-<input id="q" placeholder="Должность, например: шеф-повар">
-<div class="row">
-<select id="city"><option value="">Все города</option><option>Ташкент</option><option>Самарканд</option><option>Бухара</option><option>Андижан</option><option>Фергана</option><option>Наманган</option></select>
-<select id="salary"><option value="0">Любая зарплата</option><option value="1000">$1 000+</option><option value="1500">$1 500+</option><option value="2000">$2 000+</option><option value="2500">$2 500+</option></select>
+<div class="app">
+  <div class="top">
+    <div><div class="brand">🇺🇿 Jobs Uz</div><div class="hello" id="hello">Найди работу или сотрудника</div></div>
+    <button class="secondary" onclick="openView('profile')">👤</button>
+  </div>
+
+  <section id="home" class="view active">
+    <div class="hero">
+      <h1>Работа рядом с тобой</h1>
+      <p>Вакансии, сотрудники, карта и отклики — в одном приложении.</p>
+    </div>
+    <div class="grid">
+      <div class="tile" onclick="openView('search')">🔎<b>Найти работу</b><span>Фильтры и вакансии</span></div>
+      <div class="tile" onclick="openView('employer')">🏢<b>Я ищу сотрудника</b><span>Создать вакансию</span></div>
+      <div class="tile" onclick="openView('map')">📍<b>Работа рядом</b><span>Вакансии на карте</span></div>
+      <div class="tile" onclick="openView('applications')">📨<b>Мои отклики</b><span>Статус откликов</span></div>
+      <div class="tile" onclick="openView('favorites')">⭐<b>Избранное</b><span>Сохранённые вакансии</span></div>
+      <div class="tile" onclick="openView('chat')">💬<b>Чаты</b><span>Работодатели и кандидаты</span></div>
+    </div>
+
+    <div class="section-title">Популярные вакансии</div>
+    <div id="homeJobs"></div>
+  </section>
+
+  <section id="search" class="view">
+    <div class="section-title">🔎 Найти работу</div>
+    <div class="card toolbar">
+      <input id="q" placeholder="Должность, например: шеф-повар" oninput="renderJobs()">
+      <div class="row">
+        <select id="city" onchange="renderJobs()"><option value="">Все города</option><option>Ташкент</option><option>Самарканд</option><option>Бухара</option><option>Андижан</option><option>Фергана</option><option>Наманган</option></select>
+        <select id="salary" onchange="renderJobs()"><option value="0">Любая зарплата</option><option value="1000">$1 000+</option><option value="1500">$1 500+</option><option value="2000">$2 000+</option><option value="2500">$2 500+</option></select>
+      </div>
+      <div class="row">
+        <select id="schedule" onchange="renderJobs()"><option value="">Любой график</option><option>Полный день</option><option>Сменный</option><option>Частичная занятость</option></select>
+        <select id="housing" onchange="renderJobs()"><option value="">Жильё: любое</option><option value="yes">Жильё есть</option><option value="no">Без жилья</option></select>
+      </div>
+      <button class="primary" onclick="renderJobs()">🔎 Найти вакансии</button>
+    </div>
+    <div id="count" class="small"></div>
+    <div id="jobList"></div>
+  </section>
+
+  <section id="map" class="view">
+    <div class="section-title">📍 Работа рядом</div>
+    <div class="card">
+      <div class="notice">Карта в первой версии показывает вакансии рядом с выбранным городом. Позже подключим реальную геолокацию и точки работодателей.</div>
+      <div class="map" style="margin-top:10px">
+        <div class="road"></div><div class="road two"></div>
+        <div class="pin" style="left:38%;top:35%"></div><div class="pin" style="left:62%;top:54%"></div><div class="pin" style="left:48%;top:72%"></div>
+      </div>
+      <button class="primary" style="margin-top:10px" onclick="useLocation()">📍 Определить моё местоположение</button>
+      <div id="locStatus" class="small" style="margin-top:7px"></div>
+    </div>
+    <div id="nearJobs"></div>
+  </section>
+
+  <section id="applications" class="view">
+    <div class="section-title">📨 Мои отклики</div>
+    <div id="applicationsList"></div>
+  </section>
+
+  <section id="favorites" class="view">
+    <div class="section-title">⭐ Избранное</div>
+    <div id="favoritesList"></div>
+  </section>
+
+  <section id="chat" class="view">
+    <div class="section-title">💬 Чат</div>
+    <div class="card">
+      <div class="profile-head"><div class="avatar">RC</div><div><b>Ресторанный комплекс</b><div class="small">Шеф-повар • Ташкент</div></div></div>
+    </div>
+    <div class="chat">
+      <div class="bubble in">Здравствуйте! Вакансия шеф-повара ещё актуальна.</div>
+      <div class="bubble out">Здравствуйте. Да, хочу узнать график и условия.</div>
+      <div class="bubble in">График 5/2, питание за счёт компании.</div>
+      <div class="bubble out">Отлично, готов отправить резюме.</div>
+    </div>
+    <div class="card" style="margin-top:10px"><div class="row"><input placeholder="Сообщение"><button class="primary" onclick="alert('Демо: сообщение отправлено')">Отправить</button></div></div>
+  </section>
+
+  <section id="profile" class="view">
+    <div class="section-title">👤 Мой профиль</div>
+    <div class="card">
+      <div class="profile-head"><div class="avatar" id="avatar">JU</div><div><div style="font-size:19px;font-weight:800" id="profileName">Новый пользователь</div><div class="small">Соискатель • Узбекистан</div></div></div>
+      <div class="form" style="margin-top:14px">
+        <input id="nameInput" placeholder="Имя и фамилия">
+        <input id="phoneInput" placeholder="+998 ...">
+        <select id="professionInput"><option>Шеф-повар</option><option>Су-шеф</option><option>Повар</option><option>Официант</option><option>Бариста</option><option>Другое</option></select>
+        <input id="experienceInput" placeholder="Опыт, например: 10 лет">
+        <input id="desiredInput" placeholder="Желаемая зарплата, $">
+        <textarea id="aboutInput" placeholder="О себе"></textarea>
+        <button class="primary" onclick="saveProfile()">💾 Сохранить профиль</button>
+      </div>
+    </div>
+    <div class="list">
+      <div class="list-item" onclick="openView('applications')"><span>📨 Мои отклики</span><b>›</b></div>
+      <div class="list-item" onclick="openView('favorites')"><span>⭐ Избранное</span><b>›</b></div>
+      <div class="list-item" onclick="openView('chat')"><span>💬 Чаты</span><b>›</b></div>
+    </div>
+  </section>
+
+  <section id="employer" class="view">
+    <div class="section-title">🏢 Я ищу сотрудника</div>
+    <div class="card">
+      <div class="form">
+        <input id="eCompany" placeholder="Название компании">
+        <input id="ePosition" placeholder="Должность">
+        <div class="row"><input id="eCity" placeholder="Город"><input id="eSalary" placeholder="Зарплата, $"></div>
+        <div class="row"><select id="eSchedule"><option>Полный день</option><option>Сменный</option><option>Частичная занятость</option></select><select id="eHousing"><option>Нет жилья</option><option>Жильё есть</option></select></div>
+        <textarea id="eDesc" placeholder="Требования и условия"></textarea>
+        <button class="primary" onclick="publishVacancy()">🚀 Опубликовать вакансию</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="admin" class="view">
+    <div class="section-title">🛡 Админ-панель</div>
+    <div class="kpi">
+      <div class="card"><b>128</b><span class="small">Пользователей</span></div>
+      <div class="card"><b>42</b><span class="small">Вакансии</span></div>
+      <div class="card"><b>17</b><span class="small">Отклики</span></div>
+    </div>
+    <div class="section-title">Модерация</div>
+    <div class="list">
+      <div class="list-item"><span>🏢 Новая вакансия «Шеф-повар»</span><button class="secondary" onclick="alert('Вакансия одобрена')">Одобрить</button></div>
+      <div class="list-item"><span>👤 Новый работодатель</span><button class="secondary" onclick="alert('Профиль проверен')">Проверить</button></div>
+      <div class="list-item"><span>⚠️ Жалоба #1024</span><button class="danger" onclick="alert('Жалоба открыта')">Открыть</button></div>
+    </div>
+  </section>
 </div>
-<div class="row">
-<select id="housing"><option value="">Жильё: любое</option><option value="yes">Жильё есть</option><option value="no">Без жилья</option></select>
-<button class="primary" id="searchBtn">🔎 Найти вакансии</button>
-</div>
-</div>
-</section>
-<div class="count" id="count"></div>
-<div id="list"></div>
-</div>
+
+<div class="bottom"><div class="nav">
+  <button onclick="openView('home')" data-view="home">🏠<br>Главная</button>
+  <button onclick="openView('search')" data-view="search">🔎<br>Работа</button>
+  <button onclick="openView('map')" data-view="map">📍<br>Рядом</button>
+  <button onclick="openView('chat')" data-view="chat">💬<br>Чаты</button>
+  <button onclick="openView('profile')" data-view="profile">👤<br>Профиль</button>
+</div></div>
+
 <script>
 const jobs=[
-{id:1,title:"Шеф-повар",company:"Ресторанный комплекс",city:"Ташкент",min:2000,max:2500,housing:true,desc:"Управление кухней, командой, себестоимостью и меню."},
-{id:2,title:"Су-шеф",company:"Премиальный ресторан",city:"Самарканд",min:1500,max:2000,housing:true,desc:"Организация смен, контроль качества и обучение команды."},
-{id:3,title:"Шеф-повар",company:"Отель 5★",city:"Ташкент",min:2500,max:3000,housing:false,desc:"Опыт в гостиничном бизнесе приветствуется."},
-{id:4,title:"Повар горячего цеха",company:"Ресторан",city:"Бухара",min:800,max:1200,housing:false,desc:"Работа по технологическим картам и стандартам кухни."}
+{id:1,title:"Шеф-повар",company:"Ресторанный комплекс",city:"Ташкент",min:2000,max:2500,housing:true,schedule:"Полный день",desc:"Управление кухней, командой, себестоимостью и меню.",rating:4.9},
+{id:2,title:"Су-шеф",company:"Премиальный ресторан",city:"Самарканд",min:1500,max:2000,housing:true,schedule:"Сменный",desc:"Организация смен, контроль качества и обучение команды.",rating:4.8},
+{id:3,title:"Шеф-повар",company:"Отель 5★",city:"Ташкент",min:2500,max:3000,housing:false,schedule:"Полный день",desc:"Работа в гостиничной кухне, стабильный график и команда.",rating:4.7},
+{id:4,title:"Повар горячего цеха",company:"Ресторан",city:"Бухара",min:800,max:1200,housing:false,schedule:"Сменный",desc:"Работа по технологическим картам и стандартам кухни.",rating:4.6}
 ];
+let applications=JSON.parse(localStorage.getItem("jobs_apps")||"[]");
+let favorites=JSON.parse(localStorage.getItem("jobs_fav")||"[]");
 
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function money(n){return "$"+Number(n).toLocaleString("en-US")}
-function render(list){
-document.getElementById("count").textContent="Найдено вакансий: "+list.length;
-document.getElementById("list").innerHTML=list.length?list.map(j=>`
-<article class="card">
-<div class="title">${esc(j.title)}</div><div class="company">${esc(j.company)}</div>
-<div class="meta"><span class="pill">📍 ${esc(j.city)}</span><span class="pill">${j.housing?"🏠 Жильё":"🏠 Без жилья"}</span></div>
-<div class="salary">${money(j.min)}–${money(j.max)}</div>
-<div class="desc">${esc(j.desc)}</div>
-<div class="actions"><button onclick="shareJob(${j.id})">📤 Поделиться</button><button class="primary" onclick="applyJob(${j.id})">📩 Откликнуться</button></div>
-</article>`).join(""):'<div class="card empty">😔 Подходящих вакансий пока нет.</div>';
+function saveState(){localStorage.setItem("jobs_apps",JSON.stringify(applications));localStorage.setItem("jobs_fav",JSON.stringify(favorites))}
+function openView(id){
+ document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===id));
+ if(id==="search"||id==="home") renderJobs();
+ if(id==="applications") renderApplications();
+ if(id==="favorites") renderFavorites();
+ if(id==="map") renderNear();
+ window.scrollTo({top:0,behavior:"smooth"});
 }
-function filtered(){
-const q=document.getElementById("q").value.toLowerCase().trim(),city=document.getElementById("city").value,salary=Number(document.getElementById("salary").value),housing=document.getElementById("housing").value;
-return jobs.filter(j=>{
-const text=(j.title+" "+j.company+" "+j.desc).toLowerCase();
-return(!q||text.includes(q))&&(!city||j.city===city)&&(!salary||j.max>=salary)&&(!housing||(housing==="yes"?j.housing:!j.housing));
-});
+function card(j){
+ const fav=favorites.includes(j.id);
+ const applied=applications.find(a=>a.id===j.id);
+ return `<article class="card">
+  <div class="job-title">${esc(j.title)}</div>
+  <div class="company">${esc(j.company)} • ⭐ ${j.rating}</div>
+  <div class="meta"><span class="pill">📍 ${esc(j.city)}</span><span class="pill">🕒 ${esc(j.schedule)}</span><span class="pill">${j.housing?"🏠 Жильё":"🏠 Без жилья"}</span></div>
+  <div class="salary">${money(j.min)}–${money(j.max)}</div>
+  <div class="desc">${esc(j.desc)}</div>
+  <div class="actions">
+    <button class="secondary" onclick="toggleFav(${j.id})">${fav?"★ В избранном":"☆ В избранное"}</button>
+    <button class="primary" onclick="apply(${j.id})">${applied?"✅ Отклик отправлен":"📩 Откликнуться"}</button>
+  </div>
+ </article>`
 }
-function search(){render(filtered())}
-function applyJob(id){const j=jobs.find(x=>x.id===id);const url="https://t.me/";try{Telegram.WebApp.openTelegramLink(url)}catch(e){window.open(url,"_blank")}}
-function shareJob(id){const j=jobs.find(x=>x.id===id);const text=`Вакансия: ${j.title} — ${j.company}, ${j.city}, ${money(j.min)}–${money(j.max)}`;const url="https://t.me/share/url?url=&text="+encodeURIComponent(text);try{Telegram.WebApp.openTelegramLink(url)}catch(e){window.open(url,"_blank")}}
-document.getElementById("searchBtn").onclick=search;document.getElementById("q").oninput=search;document.getElementById("city").onchange=search;document.getElementById("salary").onchange=search;document.getElementById("housing").onchange=search;
-try{Telegram.WebApp.ready();Telegram.WebApp.expand()}catch(e){} render(jobs);
+function renderJobs(){
+ const q=(document.getElementById("q")?.value||"").toLowerCase().trim();
+ const city=document.getElementById("city")?.value||"";
+ const sal=Number(document.getElementById("salary")?.value||0);
+ const schedule=document.getElementById("schedule")?.value||"";
+ const housing=document.getElementById("housing")?.value||"";
+ const list=jobs.filter(j=>{
+  const text=(j.title+" "+j.company+" "+j.desc).toLowerCase();
+  return(!q||text.includes(q))&&(!city||j.city===city)&&(!sal||j.max>=sal)&&(!schedule||j.schedule===schedule)&&(!housing||(housing==="yes"?j.housing:!j.housing));
+ });
+ if(document.getElementById("count")) document.getElementById("count").textContent=`Найдено: ${list.length} вакансий`;
+ if(document.getElementById("jobList")) document.getElementById("jobList").innerHTML=list.length?list.map(card).join(""):'<div class="card empty">😔 Подходящих вакансий пока нет.</div>';
+ if(document.getElementById("homeJobs")) document.getElementById("homeJobs").innerHTML=jobs.slice(0,2).map(card).join("");
+}
+function toggleFav(id){if(favorites.includes(id))favorites=favorites.filter(x=>x!==id);else favorites.push(id);saveState();renderJobs();renderFavorites();renderNear()}
+function apply(id){
+ if(!applications.find(a=>a.id===id)){applications.push({id,status:"На рассмотрении"});saveState();alert("✅ Отклик отправлен работодателю")}
+ renderJobs();renderApplications();
+}
+function renderApplications(){
+ const box=document.getElementById("applicationsList"); if(!box)return;
+ box.innerHTML=applications.length?applications.map(a=>{const j=jobs.find(x=>x.id===a.id);return `<div class="card"><div class="job-title">${esc(j?.title||"Вакансия")}</div><div class="company">${esc(j?.company||"")}</div><div class="meta"><span class="badge">🕒 ${a.status}</span></div><button class="secondary" onclick="openView('chat')">💬 Открыть чат</button></div>`}).join(""):'<div class="card empty">У вас пока нет откликов.</div>';
+}
+function renderFavorites(){
+ const box=document.getElementById("favoritesList"); if(!box)return;
+ const list=jobs.filter(j=>favorites.includes(j.id));
+ box.innerHTML=list.length?list.map(card).join(""):'<div class="card empty">⭐ Здесь появятся сохранённые вакансии.</div>';
+}
+function renderNear(){
+ const box=document.getElementById("nearJobs"); if(!box)return; box.innerHTML=jobs.slice(0,3).map(card).join("");
+}
+function useLocation(){
+ const s=document.getElementById("locStatus");
+ if(!navigator.geolocation){s.textContent="Геолокация недоступна в этом браузере.";return}
+ navigator.geolocation.getCurrentPosition(pos=>{s.textContent=`✅ Геолокация получена: ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`},()=>{s.textContent="⚠️ Разрешение на геолокацию не получено."});
+}
+function saveProfile(){
+ const name=document.getElementById("nameInput").value.trim()||"Новый пользователь";
+ document.getElementById("profileName").textContent=name;
+ document.getElementById("avatar").textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
+ document.getElementById("hello").textContent=`Привет, ${name.split(/\s+/)[0]}!`;
+ localStorage.setItem("jobs_profile",name); alert("✅ Профиль сохранён");
+}
+function publishVacancy(){
+ const company=document.getElementById("eCompany").value.trim();
+ const position=document.getElementById("ePosition").value.trim();
+ if(!company||!position){alert("Укажите компанию и должность");return}
+ alert("✅ В демо-версии вакансия сохранена. Подключим реальную базу на следующем этапе.");
+}
+function loadProfile(){
+ const name=localStorage.getItem("jobs_profile"); if(name){document.getElementById("profileName").textContent=name;document.getElementById("nameInput").value=name;document.getElementById("avatar").textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();document.getElementById("hello").textContent=`Привет, ${name.split(/\s+/)[0]}!`}
+}
+try{if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}}catch(e){}
+loadProfile();renderJobs();renderApplications();renderFavorites();renderNear();
 </script>
 </body>
 </html>
