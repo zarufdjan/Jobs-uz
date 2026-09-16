@@ -348,7 +348,26 @@ function publishVacancy(){
  alert("✅ В демо-версии вакансия сохранена. Подключим реальную базу на следующем этапе.");
 }
 function loadProfile(){
- const name=localStorage.getItem("jobs_profile"); if(name){document.getElementById("profileName").textContent=name;document.getElementById("nameInput").value=name;document.getElementById("avatar").textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();document.getElementById("hello").textContent=`Привет, ${name.split(/\s+/)[0]}!`}
+ const saved=localStorage.getItem("jobs_profile");
+ if(saved){
+  try{
+   const p=JSON.parse(saved);
+   const name=(typeof p==="string" ? p : (p.name||"Новый пользователь"));
+   document.getElementById("profileName").textContent=name;
+   document.getElementById("nameInput").value=name;
+   if(typeof p==="object"){
+    document.getElementById("phoneInput").value=p.phone||"";
+    document.getElementById("professionInput").value=p.profession||"Шеф-повар";
+    document.getElementById("experienceInput").value=p.experience||"";
+    document.getElementById("desiredInput").value=p.desired||"";
+    document.getElementById("aboutInput").value=p.about||"";
+   }
+   document.getElementById("avatar").textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
+   document.getElementById("hello").textContent=`Привет, ${name.split(/\s+/)[0]}!`;
+  }catch(e){
+   console.error("profile parse",e);
+  }
+ }
 }
 try{if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}}catch(e){}
 loadProfile();renderJobs();renderApplications();renderFavorites();renderNear();loadVacanciesFromApi();
