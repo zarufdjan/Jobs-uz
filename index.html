@@ -37,7 +37,6 @@ button{border:0;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:
   <div class="top">
     <div><div class="brand">🇺🇿 Jobs Uz</div><div class="hello" id="hello">Найди работу или сотрудника</div></div>
     <button class="secondary" onclick="openView('profile')">👤</button>
-    <button class="secondary" onclick="openView('admin')" style="margin-left:6px">🛡️</button>
   </div>
 
   <section id="home" class="view active">
@@ -52,11 +51,11 @@ button{border:0;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:
       <div class="tile" onclick="openView('applications')">📨<b>Мои отклики</b><span>Статус откликов</span></div>
       <div class="tile" onclick="openView('favorites')">⭐<b>Избранное</b><span>Сохранённые вакансии</span></div>
       <div class="tile" onclick="openView('chat')">💬<b>Чаты</b><span>Работодатели и кандидаты</span></div>
-      <div class="tile" onclick="openView('admin')">🛡️<b>Админ-панель</b><span>Управление платформой</span></div>
+      <div id="adminTile" class="tile" onclick="openView('admin')" style="display:none">🛡️<b>Админ-панель</b><span>Управление платформой</span></div>
     </div>
 
     <div class="section-title">Популярные вакансии</div>
-    <div id="homeJobs"></div>
+    <div id="homeJobs"></div><div id="adsList"></div>
   </section>
 
   <section id="search" class="view">
@@ -124,6 +123,7 @@ button{border:0;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:
         <input id="phoneInput" placeholder="+998 ...">
         <select id="professionInput"><option>Шеф-повар</option><option>Су-шеф</option><option>Повар</option><option>Официант</option><option>Бариста</option><option>Другое</option></select>
         <input id="experienceInput" placeholder="Опыт, например: 10 лет">
+        <select id="roleInput"><option value="worker">Я ищу работу</option><option value="employer">Я ищу сотрудника</option></select>
         <input id="desiredInput" placeholder="Желаемая зарплата, $">
         <textarea id="aboutInput" placeholder="О себе"></textarea>
         <button class="primary" onclick="saveProfile()">💾 Сохранить профиль</button>
@@ -153,83 +153,40 @@ button{border:0;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:
   
 <section id="admin" class="view">
   <div class="section-title">🛡️ Админ-панель</div>
-  <div class="card">
-    <b style="font-size:20px">Центр управления Jobs Uz</b>
-    <div class="small">Модерация • пользователи • вакансии • реклама • монетизация</div>
-  </div>
+  <div class="notice">🔐 Доступ проверяется на сервере. ADMIN: Telegram ID 7360265969.</div>
   <div class="kpi">
-    <div class="card"><b>1 248</b><span class="small">Пользователи</span></div>
-    <div class="card"><b>186</b><span class="small">Работодатели</span></div>
-    <div class="card"><b>432</b><span class="small">Вакансии</span></div>
+    <div class="card"><b id="adminUsersCount">0</b><span class="small">Пользователи</span></div>
+    <div class="card"><b id="adminEmployersCount">0</b><span class="small">Работодатели</span></div>
+    <div class="card"><b id="adminVacanciesCount">0</b><span class="small">Вакансии</span></div>
   </div>
   <div class="kpi" style="margin-top:8px">
-    <div class="card"><b>2 840</b><span class="small">Отклики</span></div>
-    <div class="card"><b>37</b><span class="small">Жалобы</span></div>
-    <div class="card"><b>12.4M</b><span class="small">Сум доход</span></div>
+    <div class="card"><b id="adminAppsCount">0</b><span class="small">Отклики</span></div>
+    <div class="card"><b id="adminModerationCount">0</b><span class="small">На модерации</span></div>
+    <div class="card"><b id="adminBlockedCount">0</b><span class="small">Блокировки</span></div>
   </div>
-
-  <div class="section-title">📋 Модерация</div>
-  <div class="list">
-    <div class="list-item"><span>🆕 12 вакансий ждут проверки</span><button class="secondary" onclick="adminToast('Очередь вакансий открыта')">Открыть</button></div>
-    <div class="list-item"><span>⚠️ 37 жалоб</span><button class="secondary" onclick="adminToast('Очередь жалоб открыта')">Проверить</button></div>
-    <div class="list-item"><span>🏢 8 работодателей ждут проверки</span><button class="secondary" onclick="adminToast('Проверка работодателей открыта')">Проверить</button></div>
-  </div>
-
   <div class="section-title">👥 Пользователи</div>
-  <div class="card">
-    <div class="form">
-      <input placeholder="Поиск по имени, телефону или Telegram ID">
-      <div class="row">
-        <select><option>Все роли</option><option>Соискатель</option><option>Работодатель</option></select>
-        <select><option>Все статусы</option><option>Активен</option><option>Заблокирован</option></select>
-      </div>
-    </div>
-  </div>
-  <div class="list">
-    <div class="list-item"><div><b>Заруф</b><div class="small">Соискатель • TG ID 123456789</div></div><button class="danger" onclick="toggleBlock(this)">Заблокировать</button></div>
-    <div class="list-item"><div><b>Ресторанный комплекс</b><div class="small">Работодатель • TG ID 987654321</div></div><button class="danger" onclick="toggleBlock(this)">Заблокировать</button></div>
-  </div>
-
+  <div class="card"><input id="adminUserSearch" placeholder="Поиск по имени, телефону или Telegram ID" oninput="loadAdminUsers()"></div>
+  <div id="adminUsersList" class="list"></div>
   <div class="section-title">🧾 Вакансии</div>
-  <div class="list">
-    <div class="list-item"><div><b>Шеф-повар</b><div class="small">Ташкент • $2 000–2 500</div></div><button class="secondary" onclick="adminToast('Карточка вакансии открыта')">Открыть</button></div>
-    <div class="list-item"><div><b>Су-шеф</b><div class="small">Самарканд • $1 500–2 000</div></div><button class="secondary" onclick="adminToast('Карточка вакансии открыта')">Открыть</button></div>
-  </div>
-
+  <div id="adminVacanciesList" class="list"></div>
   <div class="section-title">📢 Реклама</div>
-  <div class="card">
-    <div class="form">
-      <input id="adTitle" placeholder="Заголовок">
-      <input id="adText" placeholder="Текст рекламы">
-      <input id="adLink" placeholder="Ссылка">
-      <div class="row"><select id="adPlacement"><option>Главная</option><option>Поиск</option><option>Карточки вакансий</option></select><input id="adDays" value="7" placeholder="Дней"></div>
-      <button class="primary" onclick="createAd()">📢 Создать рекламу</button>
-    </div>
-  </div>
-
+  <div class="card"><div class="form">
+    <input id="adTitle" placeholder="Заголовок рекламы">
+    <textarea id="adText" placeholder="Текст рекламы"></textarea>
+    <input id="adLink" placeholder="Ссылка">
+    <div class="row"><select id="adPlacement"><option>Главная</option><option>Поиск</option><option>Карточки вакансий</option></select><input id="adDays" value="7" placeholder="Дней"></div>
+    <button class="primary" onclick="createAd()">📢 Создать рекламу</button>
+    <div class="small">Активных реклам: <b id="adminAdsCount">0</b></div>
+  </div></div>
   <div class="section-title">💰 Монетизация</div>
   <div class="list">
     <div class="list-item"><span>VIP-вакансия</span><b>99 000 сум</b></div>
     <div class="list-item"><span>Закрепление на 7 дней</span><b>149 000 сум</b></div>
     <div class="list-item"><span>Реклама компании</span><b>от 299 000 сум</b></div>
-    <div class="list-item"><span>Премиум работодателя</span><b>199 000 сум/мес</b></div>
+    <div class="list-item"><span>Premium работодателя</span><b>199 000 сум/мес</b></div>
   </div>
-
   <div class="section-title">📊 Статистика</div>
-  <div class="card">
-    <div class="kpi">
-      <div class="card"><b>+18%</b><span class="small">Пользователи</span></div>
-      <div class="card"><b>+24%</b><span class="small">Вакансии</span></div>
-      <div class="card"><b>+31%</b><span class="small">Отклики</span></div>
-    </div>
-  </div>
-
-  <div class="section-title">⚙️ Настройки</div>
-  <div class="list">
-    <div class="list-item"><span>Автомодерация</span><span class="badge">Включена</span></div>
-    <div class="list-item"><span>Публикация без проверки</span><span class="badge" style="background:#fee2e2;color:#991b1b">Выключена</span></div>
-    <div class="list-item"><span>Жалобы</span><button class="secondary" onclick="adminToast('Настройки жалоб открыты')">Настроить</button></div>
-  </div>
+  <div class="card"><button class="secondary" onclick="loadAdmin()">🔄 Обновить</button></div>
 </section>
 
 </div>
@@ -243,7 +200,7 @@ button{border:0;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:
 </div></div>
 
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycby99tMFrWyC-K5eYnyE15nG5Uo-H-BfOKME1yz-zl4pE--a_9my1izd2NOHo6vjUtMF/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbzy99tMFrWyC-K5eYnyE15nG5Uo-H-BfOKME1yz-zl4pE--a_9my1izd2NOHo6vjUtMF/exec";
 let jobs=[];
 let apiLoaded=false;
 let applications=JSON.parse(localStorage.getItem("jobs_apps")||"[]");
@@ -253,8 +210,14 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",
 function money(n){return "$"+Number(n).toLocaleString("en-US")}
 
 function tgUser(){
-  try{return window.Telegram?.WebApp?.initDataUnsafe?.user || null;}
-  catch(e){return null;}
+  try{return window.Telegram?.WebApp?.initDataUnsafe?.user||null}catch(e){return null}
+}
+function tgInitData(){
+  try{return window.Telegram?.WebApp?.initData||""}catch(e){return ""}
+}
+function isAdminClient(){
+  const u=tgUser();
+  return !!u && String(u.id)==="7360265969";
 }
 async function loadVacanciesFromApi(){
   try{
@@ -293,7 +256,7 @@ async function apiPost(payload){
   const r=await fetch(API_URL,{
     method:"POST",
     headers:{"Content-Type":"text/plain;charset=UTF-8"},
-    body:JSON.stringify(payload)
+    body:JSON.stringify({...payload,initData:tgInitData()})
   });
   return await r.json();
 }
@@ -335,7 +298,7 @@ function openView(id){
  if(id==="search"||id==="home") renderJobs();
  if(id==="applications") renderApplications();
  if(id==="favorites") renderFavorites();
- if(id==="map") renderNear();
+ if(id==="map") renderNear(); if(id==="admin"){if(!isAdminClient()){alert("🛡️ Доступ запрещён");return;}loadAdmin();}
  window.scrollTo({top:0,behavior:"smooth"});
 }
 function card(j){
@@ -402,7 +365,7 @@ async function saveProfile(){
   experience:document.getElementById("experienceInput").value.trim(),
   desired:document.getElementById("desiredInput").value.trim(),
   about:document.getElementById("aboutInput").value.trim(),
-  role:localStorage.getItem("jobs_role")||"worker"
+  role:(document.getElementById("roleInput")?.value || localStorage.getItem("jobs_role") || "worker")
  };
  document.getElementById("profileName").textContent=name;
  document.getElementById("avatar").textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
@@ -411,11 +374,79 @@ async function saveProfile(){
  await syncUserToApi(profile);
  alert("✅ Профиль сохранён");
 }
-function publishVacancy(){
- const company=document.getElementById("eCompany").value.trim();
- const position=document.getElementById("ePosition").value.trim();
- if(!company||!position){alert("Укажите компанию и должность");return}
- alert("✅ В демо-версии вакансия сохранена. Подключим реальную базу на следующем этапе.");
+async function publishVacancy(){
+  if(!tgInitData()){alert("Откройте Jobs Uz внутри Telegram");return}
+  const company=document.getElementById("eCompany").value.trim();
+  const position=document.getElementById("ePosition").value.trim();
+  const city=document.getElementById("eCity").value.trim();
+  const salary=document.getElementById("eSalary").value.trim();
+  const desc=document.getElementById("eDesc").value.trim();
+  const schedule=document.getElementById("eSchedule").value;
+  const housing=document.getElementById("eHousing").value;
+  if(!company||!position||!city){alert("Укажите компанию, должность и город");return}
+  const nums=salary.split(/[-–]/).map(function(x){return Number(x.replace(/[^\d.]/g,""))||0;});
+  const role=document.getElementById("roleInput")?.value||localStorage.getItem("jobs_role")||"employer";
+  if(role!=="employer"){alert("Сначала в профиле выберите роль «Я ищу сотрудника»");return}
+  const r=await apiPost({
+    action:"publishVacancy",role:"employer",company,title:position,city,
+    minSalary:nums[0]||0,maxSalary:nums[1]||nums[0]||0,
+    schedule,housing:(housing==="Жильё есть"?"Да":"Нет"),description:desc
+  });
+  alert(r.ok?"✅ Вакансия отправлена на модерацию":"⚠️ "+(r.error||"Ошибка"));
+}
+
+async function loadAdmin(){
+  if(!isAdminClient()){alert("🛡️ Доступ к админ-панели запрещён");openView("home");return}
+  const r=await apiPost({action:"adminDashboard"});
+  if(!r.ok){alert("⚠️ "+(r.error||"Ошибка доступа"));openView("home");return}
+  const d=r.dashboard||{};
+  [["adminUsersCount",d.users],["adminEmployersCount",d.employers],["adminVacanciesCount",d.vacancies],["adminAppsCount",d.applications],["adminModerationCount",d.moderation],["adminBlockedCount",d.blocked],["adminAdsCount",d.activeAds]].forEach(function(x){const e=document.getElementById(x[0]);if(e)e.textContent=x[1]??0});
+  await loadAdminUsers(); await loadAdminVacancies();
+}
+async function loadAdminUsers(){
+  const box=document.getElementById("adminUsersList");if(!box)return;
+  const r=await apiPost({action:"adminUsers"});if(!r.ok){box.innerHTML='<div class="notice">⚠️ '+esc(r.error||"Ошибка")+'</div>';return}
+  const q=(document.getElementById("adminUserSearch")?.value||"").toLowerCase().trim();
+  const users=(r.users||[]).filter(function(u){const t=[u["Имя"],u["Телефон"],u["Telegram ID"]].join(" ").toLowerCase();return !q||t.includes(q);});
+  box.innerHTML=users.map(function(u){
+    const id=String(u["Telegram ID"]||"").replace(/'/g,"\'");
+    const blocked=String(u["Активен"]||"").toLowerCase()==="нет";
+    return '<div class="list-item"><div><b>'+esc(u["Имя"]||"Без имени")+'</b><div class="small">'+esc(u["Роль"]||"")+' • TG '+esc(id)+' '+(blocked?"• 🔴 Заблокирован":"• 🟢 Активен")+'</div></div><button class="'+(blocked?"secondary":"danger")+'" onclick="'+(blocked?`adminUnblock('${id}')`:`adminBlock('${id}')`)+'">'+(blocked?"Разблокировать":"Заблокировать")+'</button></div>';
+  }).join("")||'<div class="card empty">Пользователей нет.</div>';
+}
+async function adminBlock(id){
+  const reason=prompt("Причина блокировки","Нарушение правил Jobs Uz")||"Нарушение правил";
+  const r=await apiPost({action:"adminBlockUser",telegramId:id,reason});
+  alert(r.ok?"✅ Пользователь заблокирован":"⚠️ "+(r.error||"Ошибка"));if(r.ok)loadAdmin();
+}
+async function adminUnblock(id){
+  const r=await apiPost({action:"adminUnblockUser",telegramId:id});
+  alert(r.ok?"✅ Пользователь разблокирован":"⚠️ "+(r.error||"Ошибка"));if(r.ok)loadAdmin();
+}
+async function loadAdminVacancies(){
+  const box=document.getElementById("adminVacanciesList");if(!box)return;
+  const r=await apiPost({action:"adminVacancies"});if(!r.ok){box.innerHTML='<div class="notice">⚠️ '+esc(r.error||"Ошибка")+'</div>';return}
+  box.innerHTML=(r.vacancies||[]).map(function(v){
+    const id=String(v["ID"]||"").replace(/'/g,"\'");
+    const st=String(v["Статус модерации"]||"");
+    return '<div class="list-item"><div><b>'+esc(v["Должность"]||"")+'</b><div class="small">'+esc(v["Компания"]||"")+' • '+esc(v["Город"]||"")+' • $'+esc(v["Зарплата от, $"]||0)+'–$'+esc(v["Зарплата до, $"]||0)+'</div><div class="small">Статус: '+esc(st||"—")+'</div></div>'+(st==="На проверке"?`<div class="row"><button class="secondary" onclick="adminVacancy('${id}','Одобрена')">✓</button><button class="danger" onclick="adminVacancy('${id}','Отклонена')">✕</button></div>`:"")+'</div>';
+  }).join("")||'<div class="card empty">Вакансий нет.</div>';
+}
+async function adminVacancy(id,status){
+  const r=await apiPost({action:"adminSetVacancyStatus",vacancyId:id,status});
+  alert(r.ok?"✅ Статус изменён":"⚠️ "+(r.error||"Ошибка"));if(r.ok)loadAdmin();
+}
+async function createAd(){
+  const title=document.getElementById("adTitle")?.value.trim(),text=document.getElementById("adText")?.value.trim(),link=document.getElementById("adLink")?.value.trim(),days=document.getElementById("adDays")?.value.trim()||"7",placement=document.getElementById("adPlacement")?.value||"Главная";
+  if(!title||!text){alert("Введите заголовок и текст");return}
+  const r=await apiPost({action:"adminCreateAd",title,text,link,days,placement});
+  alert(r.ok?"✅ Реклама создана":"⚠️ "+(r.error||"Ошибка"));if(r.ok){document.getElementById("adTitle").value="";document.getElementById("adText").value="";document.getElementById("adLink").value="";loadAdmin();}
+}
+function loadAds(){
+  fetch(API_URL+"?action=ads").then(function(r){return r.json()}).then(function(d){
+    const box=document.getElementById("adsList");if(!box)return;
+    box.innerHTML=(d.ads||[]).filter(function(a){return String(a["Место"]||"Главная")==="Главная"}).map(function(a){return '<div class="card"><b>📢 '+esc(a["Заголовок"]||"")+'</b><div class="desc">'+esc(a["Текст"]||"")+'</div>'+(a["Ссылка"]?'<button class="secondary" onclick="window.open(\''+String(a["Ссылка"]).replace(/'/g,"\\'")+'\',\'_blank\')">Подробнее</button>':"")+'</div>'}).join("");
+  }).catch(function(){});
 }
 
 function adminToast(message){ alert("🛡️ ADMIN\n\n"+message); }
@@ -449,6 +480,7 @@ function loadProfile(){
     document.getElementById("experienceInput").value=p.experience||"";
     document.getElementById("desiredInput").value=p.desired||"";
     document.getElementById("aboutInput").value=p.about||"";
+    const roleEl=document.getElementById("roleInput"); if(roleEl) roleEl.value=p.role||"worker";
    }
    document.getElementById("avatar").textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
    document.getElementById("hello").textContent=`Привет, ${name.split(/\s+/)[0]}!`;
@@ -458,7 +490,8 @@ function loadProfile(){
  }
 }
 try{if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}}catch(e){}
-loadProfile();renderJobs();renderApplications();renderFavorites();renderNear();loadVacanciesFromApi();
+const adminTile=document.getElementById("adminTile"); if(adminTile) adminTile.style.display=isAdminClient()?"flex":"none";
+loadProfile();renderJobs();renderApplications();renderFavorites();renderNear();loadVacanciesFromApi();loadAds();
 </script>
 </body>
 </html>
