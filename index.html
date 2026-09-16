@@ -148,20 +148,88 @@ button{border:0;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:
     </div>
   </section>
 
-  <section id="admin" class="view">
-    <div class="section-title">🛡 Админ-панель</div>
+  
+<section id="admin" class="view">
+  <div class="section-title">🛡️ Админ-панель</div>
+  <div class="card">
+    <b style="font-size:20px">Центр управления Jobs Uz</b>
+    <div class="small">Модерация • пользователи • вакансии • реклама • монетизация</div>
+  </div>
+  <div class="kpi">
+    <div class="card"><b>1 248</b><span class="small">Пользователи</span></div>
+    <div class="card"><b>186</b><span class="small">Работодатели</span></div>
+    <div class="card"><b>432</b><span class="small">Вакансии</span></div>
+  </div>
+  <div class="kpi" style="margin-top:8px">
+    <div class="card"><b>2 840</b><span class="small">Отклики</span></div>
+    <div class="card"><b>37</b><span class="small">Жалобы</span></div>
+    <div class="card"><b>12.4M</b><span class="small">Сум доход</span></div>
+  </div>
+
+  <div class="section-title">📋 Модерация</div>
+  <div class="list">
+    <div class="list-item"><span>🆕 12 вакансий ждут проверки</span><button class="secondary" onclick="adminToast('Очередь вакансий открыта')">Открыть</button></div>
+    <div class="list-item"><span>⚠️ 37 жалоб</span><button class="secondary" onclick="adminToast('Очередь жалоб открыта')">Проверить</button></div>
+    <div class="list-item"><span>🏢 8 работодателей ждут проверки</span><button class="secondary" onclick="adminToast('Проверка работодателей открыта')">Проверить</button></div>
+  </div>
+
+  <div class="section-title">👥 Пользователи</div>
+  <div class="card">
+    <div class="form">
+      <input placeholder="Поиск по имени, телефону или Telegram ID">
+      <div class="row">
+        <select><option>Все роли</option><option>Соискатель</option><option>Работодатель</option></select>
+        <select><option>Все статусы</option><option>Активен</option><option>Заблокирован</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="list">
+    <div class="list-item"><div><b>Заруф</b><div class="small">Соискатель • TG ID 123456789</div></div><button class="danger" onclick="toggleBlock(this)">Заблокировать</button></div>
+    <div class="list-item"><div><b>Ресторанный комплекс</b><div class="small">Работодатель • TG ID 987654321</div></div><button class="danger" onclick="toggleBlock(this)">Заблокировать</button></div>
+  </div>
+
+  <div class="section-title">🧾 Вакансии</div>
+  <div class="list">
+    <div class="list-item"><div><b>Шеф-повар</b><div class="small">Ташкент • $2 000–2 500</div></div><button class="secondary" onclick="adminToast('Карточка вакансии открыта')">Открыть</button></div>
+    <div class="list-item"><div><b>Су-шеф</b><div class="small">Самарканд • $1 500–2 000</div></div><button class="secondary" onclick="adminToast('Карточка вакансии открыта')">Открыть</button></div>
+  </div>
+
+  <div class="section-title">📢 Реклама</div>
+  <div class="card">
+    <div class="form">
+      <input id="adTitle" placeholder="Заголовок">
+      <input id="adText" placeholder="Текст рекламы">
+      <input id="adLink" placeholder="Ссылка">
+      <div class="row"><select id="adPlacement"><option>Главная</option><option>Поиск</option><option>Карточки вакансий</option></select><input id="adDays" value="7" placeholder="Дней"></div>
+      <button class="primary" onclick="createAd()">📢 Создать рекламу</button>
+    </div>
+  </div>
+
+  <div class="section-title">💰 Монетизация</div>
+  <div class="list">
+    <div class="list-item"><span>VIP-вакансия</span><b>99 000 сум</b></div>
+    <div class="list-item"><span>Закрепление на 7 дней</span><b>149 000 сум</b></div>
+    <div class="list-item"><span>Реклама компании</span><b>от 299 000 сум</b></div>
+    <div class="list-item"><span>Премиум работодателя</span><b>199 000 сум/мес</b></div>
+  </div>
+
+  <div class="section-title">📊 Статистика</div>
+  <div class="card">
     <div class="kpi">
-      <div class="card"><b>128</b><span class="small">Пользователей</span></div>
-      <div class="card"><b>42</b><span class="small">Вакансии</span></div>
-      <div class="card"><b>17</b><span class="small">Отклики</span></div>
+      <div class="card"><b>+18%</b><span class="small">Пользователи</span></div>
+      <div class="card"><b>+24%</b><span class="small">Вакансии</span></div>
+      <div class="card"><b>+31%</b><span class="small">Отклики</span></div>
     </div>
-    <div class="section-title">Модерация</div>
-    <div class="list">
-      <div class="list-item"><span>🏢 Новая вакансия «Шеф-повар»</span><button class="secondary" onclick="alert('Вакансия одобрена')">Одобрить</button></div>
-      <div class="list-item"><span>👤 Новый работодатель</span><button class="secondary" onclick="alert('Профиль проверен')">Проверить</button></div>
-      <div class="list-item"><span>⚠️ Жалоба #1024</span><button class="danger" onclick="alert('Жалоба открыта')">Открыть</button></div>
-    </div>
-  </section>
+  </div>
+
+  <div class="section-title">⚙️ Настройки</div>
+  <div class="list">
+    <div class="list-item"><span>Автомодерация</span><span class="badge">Включена</span></div>
+    <div class="list-item"><span>Публикация без проверки</span><span class="badge" style="background:#fee2e2;color:#991b1b">Выключена</span></div>
+    <div class="list-item"><span>Жалобы</span><button class="secondary" onclick="adminToast('Настройки жалоб открыты')">Настроить</button></div>
+  </div>
+</section>
+
 </div>
 
 <div class="bottom"><div class="nav">
@@ -347,6 +415,24 @@ function publishVacancy(){
  if(!company||!position){alert("Укажите компанию и должность");return}
  alert("✅ В демо-версии вакансия сохранена. Подключим реальную базу на следующем этапе.");
 }
+
+function adminToast(message){ alert("🛡️ ADMIN\n\n"+message); }
+function toggleBlock(btn){
+  const currentlyBlocked=btn.textContent.includes("Разблокировать");
+  btn.textContent=currentlyBlocked?"Заблокировать":"Разблокировать";
+  btn.className=currentlyBlocked?"danger":"secondary";
+  alert(currentlyBlocked?"Пользователь разблокирован":"Пользователь заблокирован");
+}
+function createAd(){
+  const title=document.getElementById("adTitle").value.trim();
+  const text=document.getElementById("adText").value.trim();
+  const link=document.getElementById("adLink").value.trim();
+  const days=document.getElementById("adDays").value.trim()||"7";
+  const placement=document.getElementById("adPlacement").value;
+  if(!title||!text){alert("Введите заголовок и текст");return}
+  alert(`✅ Реклама создана\n\nМесто: ${placement}\nСрок: ${days} дней${link?`\n${link}`:""}`);
+}
+
 function loadProfile(){
  const saved=localStorage.getItem("jobs_profile");
  if(saved){
